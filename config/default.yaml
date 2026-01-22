@@ -1,0 +1,36 @@
+experiment:
+  name: "head_recovery"
+  seed: 0
+  output_dir: "results"
+  run_tag: "dev"
+
+model:
+  name: "gpt2-small"
+  device: "cuda"          # "cpu" or "cuda"
+  dtype: "float16"        # "float32" recommended for CPU
+  # For TransformerLens, to patch attn.hook_result you usually want this true:
+  use_attn_result: true
+
+task:
+  clean_prompt: "Paris is the capital of"
+  corrupt_prompt: "Berlin is the capital of"
+
+  # Compare two vocab token IDs at final position: logit[A] - logit[B]
+  # Replace these with actual token IDs for your task.
+  id_A: 0
+  id_B: 0
+  measure_pos: -1
+
+patching:
+  patch_pos: -1           # token position to patch (destination token often -1)
+  head_subset: null       # null => scan all heads. Or list: [[layer, head], ...]
+  eps: 1.0e-9
+
+analysis:
+  topk: 10
+
+plot:
+  make_plots: true
+  annotate_topk: 10
+  heatmap_percentile_clip: [5, 95]
+  out_path: "figures/head_recovery.png"
